@@ -1,0 +1,1 @@
+* * * * * /bin/bash /usr/local/bin/magento-cron.sh >> /var/log/cron.log 2>&1
