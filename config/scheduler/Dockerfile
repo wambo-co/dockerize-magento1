@@ -82,4 +82,6 @@ COPY config/php/php.ini /usr/local/etc/php/php.ini
 COPY config/scheduler/bin/magento-cron.sh /usr/local/bin
 COPY config/scheduler/crontab /etc/crontab
 
+RUN apt-get install -qy mysql-client unzip
+
 CMD crontab /etc/crontab && cron && tailf /var/log/cron.log
