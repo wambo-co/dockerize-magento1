@@ -1,0 +1,26 @@
+{
+  "name": "wambo/dockerize-magento1",
+  "description": "Docker infrastructure defintions for Magento 1",
+  "homepage": "https://github.com/wambo-co/dockerize-magento1",
+  "license": "Apache-2.0",
+  "authors": [
+      {
+          "name": "Andreas Koch",
+          "email": "andy@ak7.io",
+          "homepage": "https://github.com/andreaskoch",
+          "role": "Author"
+      }
+  ],
+  "type": "magento-module",
+  "require": {
+	"magento-hackathon/magento-composer-installer": "*"
+  },
+  "extra": {
+    "map": [
+      ["bin", "../bin"],
+      [".env", "../.env"],
+      ["docker-compose.yml", "../docker-compose.yml"],
+      ["config", "../config"]
+    ]
+  }
+}

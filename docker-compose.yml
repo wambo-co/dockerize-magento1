@@ -1,0 +1,105 @@
+version: '3'
+
+services:
+  web:
+    build:
+      dockerfile: ./config/nginx/Dockerfile
+      context: .
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/nginx/sites-enabled/default.conf:/etc/nginx/sites-enabled/default.conf
+      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./config/nginx/ssl:/etc/nginx/ssl
+      - ./config/nginx/auth:/etc/nginx/auth
+      - .:/var/www:ro
+    depends_on:
+      - php
+    networks:
+      - front
+
+
+  php:
+    build:
+      dockerfile: ./config/php/Dockerfile
+      context: .
+    volumes:
+      - ./config/php/php.ini:/usr/local/etc/php/php.ini
+      - ./config/php/php-fpm.conf:/usr/local/etc/php-fpm.conf
+      - ./config/php/ext-xdebug.ini:/usr/local/etc/php/conf.d/ext-xdebug.ini
+      - .:/var/www
+    depends_on:
+      - db
+      - cache
+    user: www-data
+    networks:
+      - front
+      - back
+
+
+  db:
+    image: mysql:5.6
+    ports:
+      - "127.0.0.1:3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_USER: ${DATABASE_USER}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - magento2mysqldata:/var/lib/mysql
+    networks:
+      - back
+
+
+  cache:
+    image: redis:latest
+    networks:
+      - back
+
+
+  scheduler:
+    build:
+      dockerfile: ./config/scheduler/Dockerfile
+      context: .
+    volumes:
+      - ./config/scheduler/crontab:/etc/crontab
+      - ./config/scheduler/bin/magento-cron.sh:/usr/local/bin/magento-cron.sh
+      - ./config/scheduler/php.ini:/usr/local/etc/php/php.ini
+      - .:/var/www
+    networks:
+      - back
+
+
+  console:
+    build:
+      dockerfile: ./config/console/Dockerfile
+      context: .
+    volumes:
+      - ./config/console/php.ini:/usr/local/etc/php/php.ini
+      - .:/var/www
+    user: www-data
+    networks:
+      - back
+
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: "db"
+      PMA_PORT: 3306
+
+
+volumes:
+    magento2mysqldata:
+      driver: local
+
+
+networks:
+  front:
+    driver: bridge
+  back:
+    driver: bridge
