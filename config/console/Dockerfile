@@ -81,5 +81,7 @@ RUN curl -O https://files.magerun.net/n98-magerun.phar && \
 
 ADD config/php/php.ini /usr/local/etc/php/php.ini
 
+RUN apt-get install -qy mysql-client unzip
+
 WORKDIR /var/www/html
 ENTRYPOINT [ "/usr/bin/env", "magerun" ]

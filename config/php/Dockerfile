@@ -86,3 +86,5 @@ RUN cd /tmp/ && git clone https://github.com/xdebug/xdebug.git \
 ADD config/php/php.ini /usr/local/etc/php/php.ini
 ADD config/php/php-fpm.conf /usr/local/etc/php-fpm.conf
 ADD config/php/ext-xdebug.ini /usr/local/etc/php/conf.d/ext-xdebug.ini
+
+RUN apt-get install -qy mysql-client unzip
